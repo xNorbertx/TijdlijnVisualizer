@@ -8,13 +8,14 @@ using System.Text;
 using System.Threading.Tasks;
 using TijdlijnVisualizer.Web.Entiteiten;
 using TijdlijnVisualizer.Web.Helpers;
+using TijdlijnVisualizer.Web.Services;
 
 namespace TijdlijnVisualizer.Web.Components
 {
     partial class JaarTijdlijn : ComponentBase
     {
-        [Parameter]
-        public string Json { get; set; }
+        [Inject]
+        public ITijdlijnService TijdlijnService { get; set; }
         
         [Parameter]
         public EventCallback<Tijdlijn> TijdlijnGeselecteerd { get; set; }
@@ -44,20 +45,8 @@ namespace TijdlijnVisualizer.Web.Components
             //Zet de totale breedte van de SVG viewbox
             TotaleBreedte = (Marge * 2) + (365 * BreedteFactor) + (13 * LijnBreedte);
 
-            Tijdlijnen = new List<Tijdlijn>();
-            if (Json.Trim().Substring(0, 1) == "[")
-            {
-                var jarray = JArray.Parse(Json);
-                foreach (var obj in jarray.Children<JObject>())
-                {
-                    Tijdlijnen.Add(obj.ToTijdlijn());
-                }
-            }
-            else
-            {
-                var jobject = JObject.Parse(Json);
-                Tijdlijnen.Add(jobject.ToTijdlijn());
-            }
+            //Haal tijdlijnen op uit service
+            Tijdlijnen = TijdlijnService.GetTijdlijnen();
         }
 
         public MarkupString HtmlJaarTijdlijn()

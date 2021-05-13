@@ -7,7 +7,7 @@ namespace TijdlijnVisualizer.Web.Services
 {
     public class TijdlijnService : ITijdlijnService
     {
-        private ICollection<Tijdlijn> Tijdlijnen { get; set; }
+        private ICollection<Tijdlijn> Tijdlijnen { get; set; } = new List<Tijdlijn>();
 
         public ICollection<Tijdlijn> GetTijdlijnen()
         {

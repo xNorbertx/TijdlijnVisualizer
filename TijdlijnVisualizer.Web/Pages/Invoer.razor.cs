@@ -2,7 +2,7 @@
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using System;
-using System.Text.RegularExpressions;
+using System.Collections.Generic;
 using TijdlijnVisualizer.Web.Services;
 
 namespace TijdlijnVisualizer.Web.Pages
@@ -12,10 +12,10 @@ namespace TijdlijnVisualizer.Web.Pages
         [Inject]
         NavigationManager NavigationManager { get; set; }
 
-        //[Inject]
-        //TijdlijnService TijdlijnService { get; set; }
+        [Inject]
+        ITijdlijnService TijdlijnService { get; set; }
 
-        public string InvoerText { get; set; } = "Vul hier je JSON in.";
+        public string InvoerText { get; set; }
         public string OngeldigeInvoer { get; set; } = string.Empty;
 
         public void ValideerInvoer()
@@ -26,7 +26,22 @@ namespace TijdlijnVisualizer.Web.Pages
 
                 if (PeriodeAanwezig())
                 {
-                    NavigationManager.NavigateTo($"Overzicht?JsonInvoer={InvoerText}");
+                    var jobjecten = new List<JObject>();
+                    if (InvoerText.Trim().Substring(0, 1) == "[")
+                    {
+                        var jarray = JArray.Parse(InvoerText);
+                        foreach (var obj in jarray.Children<JObject>())
+                        {
+                            jobjecten.Add(obj);
+                        }
+                    }
+                    else
+                    {
+                        var jobject = JObject.Parse(InvoerText);
+                        jobjecten.Add(jobject);
+                    }
+                    TijdlijnService.SetTijdlijnen(jobjecten);
+                    NavigationManager.NavigateTo($"Overzicht");
                     return;
                 }
 
