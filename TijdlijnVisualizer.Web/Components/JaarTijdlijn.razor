@@ -1,0 +1,33 @@
+﻿<svg id="svg-container" width="@(TotaleBreedte)" height="@(TotaleHoogte)">
+    <style type="text/css">
+        .small {
+            font: 13px sans-serif;
+        }
+    </style>
+
+    @HtmlJaarTijdlijn()
+
+    @foreach (var tijdlijn in Tijdlijnen)
+    {
+        var vanDag = tijdlijn.Periode.Van.DayOfYear - 1;
+        var vanMaand = tijdlijn.Periode.Van.Month;
+        var totEnMetDag = tijdlijn.Periode.TotEnMet.DayOfYear;
+        var totEnMetMaand = tijdlijn.Periode.TotEnMet.Month;
+        var totaalDagen = totEnMetDag - vanDag;
+
+        var yPos = GetAantalTijdlijnenMetOverlap(tijdlijn) * 15;
+        TmpTijdlijnen.Add(tijdlijn);
+
+        <rect x="@(Marge + (vanMaand * LijnBreedte) + (vanDag * BreedteFactor)-1)" y="@(HoogteTijdlijn - yPos - 17)"
+              width="@((totaalDagen) * BreedteFactor)" height="15"
+              stroke="green" stroke-width="1" fill="lightgreen"
+              rx="2" ry="2"
+              @onclick="@(e => ToonInfo(e, tijdlijn))" />
+        
+        @*<text>
+            <text class="small" x="@(Marge + (vanMaand * LijnBreedte) + (vanDag * BreedteFactor) + 2)" y="@(HoogteTijdlijn - (15 / 2))">@(tijdlijn.Periode.Van.Day)</text>
+        </text>*@
+    }
+</svg>
+
+

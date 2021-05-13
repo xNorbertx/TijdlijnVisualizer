@@ -1,0 +1,14 @@
+﻿@page "/"
+
+<div>
+    <textarea style="width: 400px; height: 800px;" @onchange="@TextEvent"></textarea>
+</div>
+<div>
+    <input type="button" value="Toon" @onclick="ValideerInvoer" />
+</div>
+
+
+@if (!string.IsNullOrEmpty(OngeldigeInvoer))
+{
+    <span style="color:red;">@(OngeldigeInvoer)</span>
+}
