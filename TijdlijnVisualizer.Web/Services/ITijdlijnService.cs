@@ -8,5 +8,6 @@ namespace TijdlijnVisualizer.Web.Services
     {
         ICollection<Tijdlijn> GetTijdlijnen();
         void SetTijdlijnen(IEnumerable<JObject> objecten);
+        void EmptyTijdlijnen();
     }
 }

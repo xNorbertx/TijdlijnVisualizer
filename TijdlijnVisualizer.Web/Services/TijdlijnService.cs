@@ -21,5 +21,10 @@ namespace TijdlijnVisualizer.Web.Services
                 Tijdlijnen.Add(obj.ToTijdlijn());
             }
         }
+
+        public void EmptyTijdlijnen()
+        {
+            Tijdlijnen.Clear();
+        }
     }
 }

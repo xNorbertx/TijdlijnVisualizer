@@ -20,21 +20,27 @@ namespace TijdlijnVisualizer.Web.Components
         [Parameter]
         public EventCallback<Tijdlijn> TijdlijnGeselecteerd { get; set; }
 
-        public ICollection<Tijdlijn> Tijdlijnen { get; set; }
-
+        
         public int TotaleBreedte { get; set; }
         public int TotaleHoogte { get; set; }
         public int HoogteTijdlijn { get; set; }
         public int Marge { get; set; }
         public int BreedteFactor { get; set; }
         public int LijnBreedte { get; set; }
-        public int Jaar { get; set; } = DateTime.Now.Year;
+        public int Jaar { get; set; }
 
-        public ICollection<Tijdlijn> TmpTijdlijnen { get; set; } = new List<Tijdlijn>();
+        public ICollection<Tijdlijn> Tijdlijnen { get; set; }
+        public IEnumerable<Tijdlijn> TijdlijnenInJaar { get; set; }
+        public ICollection<Tijdlijn> TijdlijnenGeplaatst { get; set; } = new List<Tijdlijn>();
 
 
         protected override void OnInitialized()
         {
+            //Initialiseer tijdlijnen in dit jaar
+            Jaar = DateTime.Now.Year;
+            Tijdlijnen = TijdlijnService.GetTijdlijnen();
+            TijdlijnenInJaar = Tijdlijnen.Where(x => x.Periode.IsVolledigIn(Jaar));
+
             //Initialiseer variabelen voor gebruik in dit component
             TotaleHoogte = JaarTijdlijnHelper.TotaleHoogte;
             HoogteTijdlijn = JaarTijdlijnHelper.HoogteTijdlijn;
@@ -44,9 +50,6 @@ namespace TijdlijnVisualizer.Web.Components
 
             //Zet de totale breedte van de SVG viewbox
             TotaleBreedte = (Marge * 2) + (365 * BreedteFactor) + (13 * LijnBreedte);
-
-            //Haal tijdlijnen op uit service
-            Tijdlijnen = TijdlijnService.GetTijdlijnen();
         }
 
         public MarkupString HtmlJaarTijdlijn()
@@ -60,9 +63,9 @@ namespace TijdlijnVisualizer.Web.Components
                                          (HoogteTijdlijn).ToString()));
             //verticale streepjes aan begin en eind van de lijn
             html.Append(AddSvgMarkupLijn("beginjaar", 
-                                         (Marge).ToString(), 
+                                         (Marge + (LijnBreedte / 2)).ToString(), 
                                          (HoogteTijdlijn - BreedteFactor).ToString(), 
-                                         (Marge).ToString(), 
+                                         (Marge + (LijnBreedte / 2)).ToString(), 
                                          (HoogteTijdlijn + BreedteFactor).ToString()));
             html.Append(AddSvgMarkupLijn("eindjaar",
                                          (Marge + (365 * BreedteFactor) + (12 * LijnBreedte) + (LijnBreedte / 2)).ToString(), 
@@ -110,13 +113,19 @@ namespace TijdlijnVisualizer.Web.Components
 
         public async Task ToonInfo(MouseEventArgs e, Tijdlijn tijdlijn)
         {
-            TmpTijdlijnen.Clear();
+            TijdlijnenGeplaatst.Clear();
             await TijdlijnGeselecteerd.InvokeAsync(tijdlijn);
         }
 
         public int GetAantalTijdlijnenMetOverlap(Tijdlijn tijdlijn)
         {
-            return TmpTijdlijnen.Count(x => x.Periode.HeeftOverlapMet(tijdlijn.Periode));
+            return TijdlijnenGeplaatst.Count(x => x.Periode.HeeftOverlapMet(tijdlijn.Periode));
+        }
+
+        public bool HeeftOverlapOpDezeRij(int rij, Tijdlijn tijdlijn)
+        {
+            var tijdlijnenOpRij = TijdlijnenGeplaatst.Where(x => x.Rij == rij);
+            return tijdlijnenOpRij.Any(x => x.Periode.HeeftOverlapMet(tijdlijn.Periode));
         }
     }
 }

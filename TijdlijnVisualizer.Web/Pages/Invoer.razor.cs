@@ -18,6 +18,11 @@ namespace TijdlijnVisualizer.Web.Pages
         public string InvoerText { get; set; }
         public string OngeldigeInvoer { get; set; } = string.Empty;
 
+        protected override void OnInitialized()
+        {
+            TijdlijnService.EmptyTijdlijnen();
+        }
+
         public void ValideerInvoer()
         {
             try

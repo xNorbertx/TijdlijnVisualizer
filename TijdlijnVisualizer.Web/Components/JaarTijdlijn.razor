@@ -1,4 +1,10 @@
-﻿<svg id="svg-container" width="@(TotaleBreedte)" height="@(TotaleHoogte)">
+﻿<div>
+    <span class="oi oi-chevron-left"></span>
+    <span>@(Jaar)</span>
+    <span class="oi oi-chevron-right"></span>
+</div>
+
+<svg id="svg-container" width="@(TotaleBreedte)" height="@(TotaleHoogte)">
     <style type="text/css">
         .small {
             font: 13px sans-serif;
@@ -7,19 +13,34 @@
 
     @HtmlJaarTijdlijn()
 
-    @foreach (var tijdlijn in Tijdlijnen)
+    @foreach (var tijdlijn in TijdlijnenInJaar)
     {
+        //nu even zorgen dat de hele periode in het jaar ligt
         var vanDag = tijdlijn.Periode.Van.DayOfYear - 1;
         var vanMaand = tijdlijn.Periode.Van.Month;
         var totEnMetDag = tijdlijn.Periode.TotEnMet.DayOfYear;
         var totEnMetMaand = tijdlijn.Periode.TotEnMet.Month;
         var totaalDagen = totEnMetDag - vanDag;
 
-        var yPos = GetAantalTijdlijnenMetOverlap(tijdlijn) * 15;
-        TmpTijdlijnen.Add(tijdlijn);
+        var isGeplaatst = false;
+        var rij = 1;
+        while (!isGeplaatst)
+        {
+            if (HeeftOverlapOpDezeRij(rij, tijdlijn))
+            {
+                rij++;
+                continue;
+            }
+            tijdlijn.Rij = rij;
+            TijdlijnenGeplaatst.Add(tijdlijn);
+            isGeplaatst = true;
+        }
 
-        <rect x="@(Marge + (vanMaand * LijnBreedte) + (vanDag * BreedteFactor)-1)" y="@(HoogteTijdlijn - yPos - 17)"
-              width="@((totaalDagen) * BreedteFactor)" height="15"
+        var yPos = rij * 16;
+        var maandOvergangen = totEnMetMaand - vanMaand;
+
+        <rect x="@(Marge + (vanMaand * LijnBreedte) + (vanDag * BreedteFactor))" y="@(HoogteTijdlijn - yPos)"
+              width="@((totaalDagen) * BreedteFactor + (maandOvergangen * LijnBreedte))" height="15"
               stroke="green" stroke-width="1" fill="lightgreen"
               rx="2" ry="2"
               @onclick="@(e => ToonInfo(e, tijdlijn))" />

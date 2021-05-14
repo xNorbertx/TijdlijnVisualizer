@@ -6,6 +6,7 @@ namespace TijdlijnVisualizer.Web.Entiteiten
     {
         public Periode Periode { get; set; }
         public IDictionary<string, string> Waarden { get; set; }
+        public int Rij { get; set; }
 
         public Tijdlijn()
         {

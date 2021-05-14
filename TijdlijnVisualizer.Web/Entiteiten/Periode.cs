@@ -42,5 +42,17 @@ namespace TijdlijnVisualizer.Web.Entiteiten
         {
             return deze.Doorsnede(andere) != null;
         }
+
+        public static bool IsVolledigIn(this Periode deze, int jaar)
+        {
+            var jaarPeriode = new Periode(new DateTime(jaar, 1, 1), new DateTime(jaar, 12, 31));
+            return IsVolledigIn(deze, jaarPeriode);
+        }
+
+        public static bool IsVolledigIn(this Periode deze, Periode jaarPeriode)
+        {
+            return deze.Van >= jaarPeriode.Van
+                && deze.TotEnMet <= jaarPeriode.TotEnMet;
+        }
     }
 }
