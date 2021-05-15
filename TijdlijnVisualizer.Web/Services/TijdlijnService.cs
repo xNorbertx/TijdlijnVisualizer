@@ -1,5 +1,6 @@
 ﻿using Newtonsoft.Json.Linq;
 using System.Collections.Generic;
+using System.Linq;
 using TijdlijnVisualizer.Web.Entiteiten;
 using TijdlijnVisualizer.Web.Helpers;
 

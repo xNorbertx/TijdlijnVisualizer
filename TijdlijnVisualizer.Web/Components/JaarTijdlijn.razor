@@ -1,7 +1,7 @@
 ﻿<div>
-    <span class="oi oi-chevron-left"></span>
+    <span class="oi oi-chevron-left" @onclick="NaarVorigJaar"></span>
     <span>@(Jaar)</span>
-    <span class="oi oi-chevron-right"></span>
+    <span class="oi oi-chevron-right" @onclick="NaarVolgendJaar"></span>
 </div>
 
 <svg id="svg-container" width="@(TotaleBreedte)" height="@(TotaleHoogte)">
@@ -15,11 +15,23 @@
 
     @foreach (var tijdlijn in TijdlijnenInJaar)
     {
-        //nu even zorgen dat de hele periode in het jaar ligt
-        var vanDag = tijdlijn.Periode.Van.DayOfYear - 1;
-        var vanMaand = tijdlijn.Periode.Van.Month;
-        var totEnMetDag = tijdlijn.Periode.TotEnMet.DayOfYear;
-        var totEnMetMaand = tijdlijn.Periode.TotEnMet.Month;
+        var tijdlijnPositie = BepaalTijdlijnPositie(tijdlijn);
+
+        var vanDag = tijdlijnPositie == Entiteiten.TijdlijnPositie.DeelsInVorigJaar || tijdlijnPositie == Entiteiten.TijdlijnPositie.DeelsInVorigEnVolgendJaar
+            ? 1
+            : tijdlijn.Periode.Van.DayOfYear;
+        vanDag--; //moet er 1 afhalen tbv lengte van de lijn
+        var vanMaand = tijdlijnPositie == Entiteiten.TijdlijnPositie.DeelsInVorigJaar || tijdlijnPositie == Entiteiten.TijdlijnPositie.DeelsInVorigEnVolgendJaar
+            ? 1
+            : tijdlijn.Periode.Van.Month;
+        var totEnMetDag = tijdlijnPositie == Entiteiten.TijdlijnPositie.DeelsInVolgendJaar || tijdlijnPositie == Entiteiten.TijdlijnPositie.DeelsInVorigEnVolgendJaar
+            ? (IsSchrikkelJaar)
+                ? 366
+                : 365
+            : tijdlijn.Periode.TotEnMet.DayOfYear;
+        var totEnMetMaand = tijdlijnPositie == Entiteiten.TijdlijnPositie.DeelsInVolgendJaar || tijdlijnPositie == Entiteiten.TijdlijnPositie.DeelsInVorigEnVolgendJaar
+            ? 12
+            : tijdlijn.Periode.TotEnMet.Month;
         var totaalDagen = totEnMetDag - vanDag;
 
         var isGeplaatst = false;

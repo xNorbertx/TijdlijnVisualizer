@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net;
 
 namespace TijdlijnVisualizer.Web.Entiteiten
 {
@@ -41,6 +42,12 @@ namespace TijdlijnVisualizer.Web.Entiteiten
         public static bool HeeftOverlapMet(this Periode deze, Periode andere)
         {
             return deze.Doorsnede(andere) != null;
+        }
+
+        public static bool HeeftOverlapMetJaar(this Periode deze, int jaar)
+        {
+            var jaarPeriode = new Periode(new DateTime(jaar, 1, 1), new DateTime(jaar, 12, 31));
+            return deze.HeeftOverlapMet(jaarPeriode);
         }
 
         public static bool IsVolledigIn(this Periode deze, int jaar)

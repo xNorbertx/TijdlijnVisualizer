@@ -1,6 +1,5 @@
 ﻿using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Web;
-using Newtonsoft.Json.Linq;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -28,6 +27,7 @@ namespace TijdlijnVisualizer.Web.Components
         public int BreedteFactor { get; set; }
         public int LijnBreedte { get; set; }
         public int Jaar { get; set; }
+        public bool IsSchrikkelJaar { get; set; }
 
         public ICollection<Tijdlijn> Tijdlijnen { get; set; }
         public IEnumerable<Tijdlijn> TijdlijnenInJaar { get; set; }
@@ -38,8 +38,10 @@ namespace TijdlijnVisualizer.Web.Components
         {
             //Initialiseer tijdlijnen in dit jaar
             Jaar = DateTime.Now.Year;
+            IsSchrikkelJaar = Jaar % 4 == 0;
             Tijdlijnen = TijdlijnService.GetTijdlijnen();
-            TijdlijnenInJaar = Tijdlijnen.Where(x => x.Periode.IsVolledigIn(Jaar));
+            //Tijdlijnen = Tijdlijnen.SplitsOpJaargrens();
+            TijdlijnenInJaar = Tijdlijnen.Where(x => x.Periode.HeeftOverlapMetJaar(Jaar));
 
             //Initialiseer variabelen voor gebruik in dit component
             TotaleHoogte = JaarTijdlijnHelper.TotaleHoogte;
@@ -54,6 +56,11 @@ namespace TijdlijnVisualizer.Web.Components
 
         public MarkupString HtmlJaarTijdlijn()
         {
+            if (IsSchrikkelJaar)
+            {
+                JaarTijdlijnHelper.Maanden.First(x => x.Naam == "februari").AantalDagen = 29;
+            }
+
             var html = new StringBuilder();
             //horizontale lijn
             html.Append(AddSvgMarkupLijn("jaarlijn", 
@@ -126,6 +133,27 @@ namespace TijdlijnVisualizer.Web.Components
         {
             var tijdlijnenOpRij = TijdlijnenGeplaatst.Where(x => x.Rij == rij);
             return tijdlijnenOpRij.Any(x => x.Periode.HeeftOverlapMet(tijdlijn.Periode));
+        }
+
+        public void NaarVorigJaar()
+        {
+            TijdlijnenGeplaatst.Clear();
+            Jaar--;
+            IsSchrikkelJaar = Jaar % 4 == 0;
+            TijdlijnenInJaar = Tijdlijnen.Where(x => x.Periode.HeeftOverlapMetJaar(Jaar));
+        }
+
+        public void NaarVolgendJaar()
+        {
+            TijdlijnenGeplaatst.Clear();
+            Jaar++;
+            IsSchrikkelJaar = Jaar % 4 == 0;
+            TijdlijnenInJaar = Tijdlijnen.Where(x => x.Periode.HeeftOverlapMetJaar(Jaar));
+        }
+
+        public TijdlijnPositie BepaalTijdlijnPositie(Tijdlijn tijdlijn)
+        {
+            return tijdlijn.BepaaldTijdlijnPositie(Jaar);
         }
     }
 }
