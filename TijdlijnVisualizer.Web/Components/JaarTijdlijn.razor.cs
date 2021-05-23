@@ -25,6 +25,7 @@ namespace TijdlijnVisualizer.Web.Components
         public int HoogteTijdlijn { get; set; }
         public int Marge { get; set; }
         public int BreedteFactor { get; set; }
+        public int HoogteFactor { get; set; }
         public int LijnBreedte { get; set; }
         public int Jaar { get; set; }
         public bool IsSchrikkelJaar { get; set; }
@@ -48,6 +49,7 @@ namespace TijdlijnVisualizer.Web.Components
             HoogteTijdlijn = JaarTijdlijnHelper.HoogteTijdlijn;
             Marge = JaarTijdlijnHelper.Marge;
             BreedteFactor = JaarTijdlijnHelper.BreedteFactor;
+            HoogteFactor = JaarTijdlijnHelper.HoogteFactor;
             LijnBreedte = JaarTijdlijnHelper.LijnBreedte;
 
             //Zet de totale breedte van de SVG viewbox

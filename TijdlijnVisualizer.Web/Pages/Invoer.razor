@@ -1,14 +1,24 @@
 ﻿@page "/"
 
-<div>
+@*<div>
     <textarea style="width: 400px; height: 800px;" placeholder="Vul hier je JSON objecten met een periode in." @onchange="@TextEvent"></textarea>
 </div>
 <div>
     <input type="button" value="Toon" @onclick="ValideerInvoer" />
+</div>*@
+
+<div class="input-group" style="margin:20px; width: auto;">
+    <textarea class="form-control" aria-label="With textarea" style="height: 800px;" @onchange="@TextEvent"></textarea>
+</div>
+
+<div class="input-group" style="margin:20px; width: auto;">
+    <button type="button" class="btn btn-primary btn-lg btn-block" @onclick="ValideerInvoer">Toon periodes</button>
 </div>
 
 
 @if (!string.IsNullOrEmpty(OngeldigeInvoer))
 {
-    <span style="color:red;">@(OngeldigeInvoer)</span>
+    <div class="alert alert-danger" role="alert" style="margin:20px;">
+        @(OngeldigeInvoer)
+    </div>
 }

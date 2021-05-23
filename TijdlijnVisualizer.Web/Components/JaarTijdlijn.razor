@@ -1,7 +1,9 @@
-﻿<div>
-    <span class="oi oi-chevron-left" @onclick="NaarVorigJaar"></span>
-    <span>@(Jaar)</span>
-    <span class="oi oi-chevron-right" @onclick="NaarVolgendJaar"></span>
+﻿<div style="line-height: 1.5; align-items:center; display:flex; text-align:center; " >
+    <div style="width:50%; margin: 0 auto;">
+        <span class="oi oi-chevron-left" @onclick="NaarVorigJaar"></span>
+        <span>@(Jaar)</span>
+        <span class="oi oi-chevron-right" @onclick="NaarVolgendJaar"></span>
+    </div>
 </div>
 
 <svg id="svg-container" width="@(TotaleBreedte)" height="@(TotaleHoogte)">
@@ -48,18 +50,14 @@
             isGeplaatst = true;
         }
 
-        var yPos = rij * 16;
+        var yPos = rij * (BreedteFactor * HoogteFactor + 1);
         var maandOvergangen = totEnMetMaand - vanMaand;
 
         <rect x="@(Marge + (vanMaand * LijnBreedte) + (vanDag * BreedteFactor))" y="@(HoogteTijdlijn - yPos)"
-              width="@((totaalDagen) * BreedteFactor + (maandOvergangen * LijnBreedte))" height="15"
+              width="@((totaalDagen) * BreedteFactor + (maandOvergangen * LijnBreedte))" height="@(BreedteFactor * HoogteFactor)"
               stroke="green" stroke-width="1" fill="lightgreen"
               rx="2" ry="2"
               @onclick="@(e => ToonInfo(e, tijdlijn))" />
-        
-        @*<text>
-            <text class="small" x="@(Marge + (vanMaand * LijnBreedte) + (vanDag * BreedteFactor) + 2)" y="@(HoogteTijdlijn - (15 / 2))">@(tijdlijn.Periode.Van.Day)</text>
-        </text>*@
     }
 </svg>
 

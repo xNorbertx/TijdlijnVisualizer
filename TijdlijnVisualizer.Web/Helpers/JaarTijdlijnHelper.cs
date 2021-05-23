@@ -6,7 +6,8 @@ namespace TijdlijnVisualizer.Web.Helpers
     public static class JaarTijdlijnHelper
     {
         //in pixels
-        public static int BreedteFactor = 8;
+        public static int BreedteFactor = 5;
+        public static int HoogteFactor = 5;
         public static int LijnBreedte = 2;
         public static int Marge = 20;
         public static int TotaleHoogte = 200;
